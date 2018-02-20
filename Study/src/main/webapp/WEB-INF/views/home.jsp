@@ -7,7 +7,11 @@
 <body>
 
 <a href="facebookSignin">
-	<button type="button" class="btn btn-primary">Facebook 로그인</button>
+	<button type="button" class="btn btn-primary">Request token</button>
+</a>
+
+<a href="facebookAccessToken">
+	<button type="button" class="btn btn-primary">Access token</button>
 </a>
 </body>
 </html>
