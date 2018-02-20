@@ -32,9 +32,9 @@ import org.springframework.web.client.RestTemplate;
  */
 @Controller
 public class HomeController {
-	private static final String FACEBOOK_CLIENT_ID = "184138445684067";
-	private static final String REDIRECT_URL = "http://localhost:8080/myapp/facebookAccessToken";
-	private static final String FACEBOOK_CLIENT_SECRET_KEY = "104257c2977d9b88f43ba043c02b540c";
+	private static final String FACEBOOK_CLIENT_ID = "**";
+	private static final String REDIRECT_URL = "**";
+	private static final String FACEBOOK_CLIENT_SECRET_KEY = "**";
 	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
 	private static final String USER_AGENT = "Mozila/5.0";
 
