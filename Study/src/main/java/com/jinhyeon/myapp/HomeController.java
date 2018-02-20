@@ -16,6 +16,8 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -23,6 +25,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.client.RestTemplate;
+
 
 /**
  * Handles requests for the application home page.
@@ -69,7 +72,7 @@ public class HomeController {
 		System.out.println("session : " + session);
 		
 		String accessToken = requestFacebookAccessToken(session, code);
-		System.out.println("DASDASD");
+		System.out.println(accessToken);
 //		return "redirect:"+REDIRECT_URL;
 	}
 	
@@ -100,12 +103,14 @@ public class HomeController {
 
             };
             String responseBody = httpClient.execute(httpget, responseHandler);
-            System.out.println("----------------------------------------");
-            System.out.println(responseBody);
+            JSONParser jsonParser = new JSONParser();
+            JSONObject jsonObject = (JSONObject) jsonParser.parse(responseBody);
+            String facebookAccessToken = (String) jsonObject.get("access_token");
+//            System.out.println(facebookAccessToken);
+            session.setAttribute("facebookAccessToken", facebookAccessToken);
+            return facebookAccessToken;
         } finally {
             httpClient.close();
         }		
-		
-		return null;
 	}
 }
