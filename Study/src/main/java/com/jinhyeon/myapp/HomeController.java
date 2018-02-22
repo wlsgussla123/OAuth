@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.Locale;
-import java.util.PriorityQueue;
 
 import javax.servlet.http.HttpSession;
 
@@ -24,7 +23,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.client.RestTemplate;
 
 
 /**
@@ -72,7 +70,7 @@ public class HomeController {
 		System.out.println("session : " + session);
 		
 		String accessToken = requestFacebookAccessToken(session, code);
-		System.out.println(accessToken);
+		facebookUserDataLoadAndSave(accessToken, session);
 //		return "redirect:"+REDIRECT_URL;
 	}
 	
@@ -112,5 +110,36 @@ public class HomeController {
         } finally {
             httpClient.close();
         }		
+	}
+	
+	private void facebookUserDataLoadAndSave(String accessToken, HttpSession session) throws Exception {
+		String facebookUrl = "https://graph.facebook.com/me?"+
+							 "access_token="+accessToken+
+							 "&fields=id,name,email";
+		
+		CloseableHttpClient httpClient = HttpClients.createDefault();
+		try {
+			HttpGet httpGet = new HttpGet(facebookUrl);
+			
+            // Create a custom response handler
+            ResponseHandler<String> responseHandler = new ResponseHandler<String>() {
+                public String handleResponse(
+                        final HttpResponse response) throws ClientProtocolException, IOException {
+                    int status = response.getStatusLine().getStatusCode();
+                    if (status >= 200 && status < 300) {
+                        HttpEntity entity = response.getEntity();
+                        return entity != null ? EntityUtils.toString(entity) : null;
+                    } else {
+                        throw new ClientProtocolException("Unexpected response status: " + status);
+                    }
+                }
+            };
+            String responseBody = httpClient.execute(httpGet, responseHandler);
+            JSONParser jsonParser = new JSONParser();
+            JSONObject jsonObject = (JSONObject) jsonParser.parse(responseBody);
+            System.out.println(jsonObject);
+		} finally {
+			httpClient.close();
+		}
 	}
 }
